@@ -182,9 +182,9 @@
 					credentialType: 'password'
 				},
 				{
-					urls: [`turn:openrelay.metered.ca:80`],
-					username: 'openrelayproject',
-					credential: 'openrelayproject',
+					urls: [`turn:turn.abhisheksarkar.me:3478`],
+					username: 'azureturn',
+					credential: 'azureturn',
 					credentialType: 'password'
 				}
 			]

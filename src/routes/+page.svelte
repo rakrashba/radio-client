@@ -176,12 +176,6 @@
 					urls: ['stun:stun.4.google.com:19302']
 				},
 				{
-					urls: [`turn:msh22.abhisheksarkar.me:3478`],
-					username: 'holyshot',
-					credential: 'myfckinggawd',
-					credentialType: 'password'
-				},
-				{
 					urls: [`turn:turn.abhisheksarkar.me:3478`],
 					username: 'azureturn',
 					credential: 'azureturn',

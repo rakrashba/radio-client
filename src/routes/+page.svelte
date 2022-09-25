@@ -211,7 +211,7 @@
 		audElem.srcObject = MS;
 		let wsd = 'ws://localhost:29874/ws';
 		if (!dev) {
-			wsd = 'ws://msh22.abhisheksarkar.me:29874/ws';
+			wsd = 'wss://msh22.abhisheksarkar.me:29874/ws';
 		}
 		const ws = new WebSocket(wsd);
 		ws.onclose = () => {

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { dev } from '$app/environment';
 	let PEER_CONN: RTCPeerConnection | null = null;
 	let joinSpeaker = async () => {
 		IS_SPEAKER = true;
@@ -155,6 +156,10 @@
 		await PEER_CONN.addIceCandidate(ice_candidate);
 	}
 
+	let turnd = 'localhost:23675';
+	if (!dev) {
+		turnd = 'msh22.abhisheksarkar.me:23675';
+	}
 	let createPeerConn = async (): Promise<RTCPeerConnection> => {
 		let pc = new RTCPeerConnection({
 			iceServers: [
@@ -167,7 +172,7 @@
 					]
 				},
 				{
-					urls: `turn:localhost:3478`,
+					urls: `turn:${turnd}`,
 					username: 'user',
 					credential: 'pwd',
 					credentialType: 'password'
@@ -204,7 +209,11 @@
 		MS = new MediaStream();
 		const audElem = document.querySelector('#audioElem > audio') as HTMLAudioElement;
 		audElem.srcObject = MS;
-		const ws = new WebSocket(`ws://${window.location.host.split(':')[0]}:3000/ws`);
+		let wsd = 'ws://localhost:29874/ws';
+		if (!dev) {
+			wsd = 'ws://msh22.abhisheksarkar.me:29874/ws';
+		}
+		const ws = new WebSocket(wsd);
 		ws.onclose = () => {
 			console.log('Signalling server closed');
 		};

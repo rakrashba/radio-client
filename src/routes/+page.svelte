@@ -156,11 +156,11 @@
 		await PEER_CONN.addIceCandidate(ice_candidate);
 	}
 
-	// let turnd = 'localhost:23675';
-	// if (!dev) {
-	// 	turnd = 'msh22.abhisheksarkar.me:23675';
-	// }
-	let createPeerConn = async (): Promise<RTCPeerConnection> => {
+	let makePeerConn = async () => {
+		if (PEER_CONN != null) {
+			console.error('A connection already exists');
+			return;
+		}
 		let pc = new RTCPeerConnection({
 			iceServers: [
 				{
@@ -183,20 +183,14 @@
 				}
 			]
 		});
+		PEER_CONN = pc;
+		pc.onnegotiationneeded = handleNegotiationNeededEvent;
+		pc.onicecandidate = handleOnIceCandidate;
 		pc.ontrack = handleTrackEvent;
 		pc.oniceconnectionstatechange = handleICEConnectionStateChangeEvent;
 		pc.onicegatheringstatechange = handleICEGatheringStateChangeEvent;
 		pc.onsignalingstatechange = handleSignalingStateChangeEvent;
-		pc.onnegotiationneeded = handleNegotiationNeededEvent;
-		pc.onicecandidate = handleOnIceCandidate;
-		return pc;
-	};
-	let makePeerConn = async () => {
-		if (PEER_CONN != null) {
-			console.error('A connection already exists');
-			return;
-		}
-		let pc = await createPeerConn();
+
 		if (IS_SPEAKER) {
 			let stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 			stream.getTracks().forEach((track) => {
@@ -206,7 +200,6 @@
 		} else {
 			pc.addTransceiver('audio', { direction: 'recvonly' });
 		}
-		PEER_CONN = pc;
 	};
 
 	onMount(async () => {

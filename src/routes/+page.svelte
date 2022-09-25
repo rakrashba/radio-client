@@ -180,6 +180,9 @@
 					username: 'holyshot',
 					credential: 'myfckinggawd',
 					credentialType: 'password'
+				},
+				{
+					urls: [`turn:openrelay.metered.ca:443`]
 				}
 			]
 		});

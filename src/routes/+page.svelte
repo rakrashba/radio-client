@@ -156,10 +156,10 @@
 		await PEER_CONN.addIceCandidate(ice_candidate);
 	}
 
-	let turnd = 'localhost:23675';
-	if (!dev) {
-		turnd = 'msh22.abhisheksarkar.me:23675';
-	}
+	// let turnd = 'localhost:23675';
+	// if (!dev) {
+	// 	turnd = 'msh22.abhisheksarkar.me:23675';
+	// }
 	let createPeerConn = async (): Promise<RTCPeerConnection> => {
 		let pc = new RTCPeerConnection({
 			iceServers: [
@@ -172,9 +172,9 @@
 					]
 				},
 				{
-					urls: `turn:${turnd}`,
-					username: 'user',
-					credential: 'pwd',
+					urls: `turn:numb.viagenie.ca`,
+					username: 'webrtc@live.com',
+					credential: 'muazkh',
 					credentialType: 'password'
 				}
 			]

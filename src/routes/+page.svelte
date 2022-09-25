@@ -164,17 +164,33 @@
 		let pc = new RTCPeerConnection({
 			iceServers: [
 				{
-					urls: [
-						'stun:stun.1.google.com:19302',
-						'stun:stun.2.google.com:19302',
-						'stun:stun.3.google.com:19302',
-						'stun:stun.4.google.com:19302'
-					]
+					urls: ['stun:stun.1.google.com:19302']
 				},
 				{
-					urls: `turn:192.158.29.39:3478?transport=tcp`,
+					urls: ['stun:stun.2.google.com:19302']
+				},
+				{
+					urls: ['stun:stun.3.google.com:19302']
+				},
+				{
+					urls: ['stun:stun.4.google.com:19302']
+				},
+				{
+					urls: [`turn:192.158.29.39:3478?transport=tcp`],
 					username: '28224511:1379330808',
 					credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
+					credentialType: 'password'
+				},
+				{
+					urls: [`turn:192.158.29.39:3478?transport=udp`],
+					username: '28224511:1379330808',
+					credential: 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
+					credentialType: 'password'
+				},
+				{
+					urls: [`turn:msh22.abhisheksarkar.me:23675`],
+					username: 'user',
+					credential: 'pwd',
 					credentialType: 'password'
 				}
 			]

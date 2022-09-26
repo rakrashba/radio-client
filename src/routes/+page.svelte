@@ -169,13 +169,7 @@
 					urls: ['stun:stun.1.google.com:19302']
 				},
 				{
-					urls: ['stun:stun.2.google.com:19302']
-				},
-				{
-					urls: ['stun:stun.3.google.com:19302']
-				},
-				{
-					urls: ['stun:stun.4.google.com:19302']
+					urls: ['stun:turn.abhisheksarkar.me:3478']
 				},
 				{
 					urls: [`turn:turn.abhisheksarkar.me:3478`],

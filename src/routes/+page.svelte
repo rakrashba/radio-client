@@ -71,9 +71,11 @@
 		console.log('iceConnectionState: ', PEER_CONN?.iceConnectionState);
 		switch (PEER_CONN?.iceConnectionState) {
 			case 'closed':
-			case 'failed':
+			case 'disconnected':
 				closeConn(PEER_CONN);
 				break;
+			case 'failed':
+				PEER_CONN?.restartIce();
 		}
 	}
 

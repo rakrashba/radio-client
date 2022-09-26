@@ -119,13 +119,10 @@
 	}
 
 	async function handleOffer(data: WSMsg) {
-		while (PEER_CONN?.signalingState != 'stable') {
-			return;
-		}
-		const sdp = JSON.parse(data.data) as RTCSessionDescription;
-		await PEER_CONN?.setRemoteDescription(sdp); // SRD rolls back as needed
-		let local_desc = (await PEER_CONN?.createAnswer()) as RTCSessionDescriptionInit;
 		try {
+			const sdp = JSON.parse(data.data) as RTCSessionDescription;
+			await PEER_CONN?.setRemoteDescription(sdp); // SRD rolls back as needed
+			let local_desc = (await PEER_CONN?.createAnswer()) as RTCSessionDescriptionInit;
 			await PEER_CONN?.setLocalDescription(local_desc);
 			let ev = IS_SPEAKER ? 'speaker-answer' : 'listener-answer';
 			await sendToServer({
@@ -135,23 +132,30 @@
 			});
 		} catch (e) {
 			console.error(e);
-			PEER_CONN?.restartIce();
 		}
 	}
 
 	async function handleAnswer(data: WSMsg) {
-		const sdp = JSON.parse(data.data) as RTCSessionDescription;
-		isSettingRemoteAnswerPending = true;
-		console.log('[handleAnswer] -> setting remote description');
-		await PEER_CONN?.setRemoteDescription(sdp);
-		console.log('[handleAnswer] -> setting remote description  -> done');
-		isSettingRemoteAnswerPending = false;
+		try {
+			const sdp = JSON.parse(data.data) as RTCSessionDescription;
+			isSettingRemoteAnswerPending = true;
+			console.log('[handleAnswer] -> setting remote description');
+			await PEER_CONN?.setRemoteDescription(sdp);
+			console.log('[handleAnswer] -> setting remote description  -> done');
+			isSettingRemoteAnswerPending = false;
+		} catch (e) {
+			console.error(e);
+		}
 	}
 
 	async function handleNewIceCandidate(data: WSMsg) {
-		if (PEER_CONN == null) return;
-		const ice_candidate = JSON.parse(data.data) as RTCIceCandidateInit;
-		await PEER_CONN.addIceCandidate(ice_candidate);
+		try {
+			const ice_candidate = JSON.parse(data.data) as RTCIceCandidateInit;
+			await PEER_CONN?.addIceCandidate(ice_candidate);
+			console.log('Ice candidate added from remote');
+		} catch (e) {
+			console.error(e);
+		}
 	}
 
 	let makePeerConn = async () => {

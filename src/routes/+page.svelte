@@ -166,15 +166,12 @@
 		let pc = new RTCPeerConnection({
 			iceServers: [
 				{
-					urls: ['stun:stun.1.google.com:19302']
+					urls: ['stun:stun.l.google.com:19302']
 				},
 				{
-					urls: ['stun:turn.abhisheksarkar.me:3478']
-				},
-				{
-					urls: [`turn:turn.abhisheksarkar.me:3478`],
-					username: 'azureturn',
-					credential: 'azureturn',
+					urls: [`turn:openrelay.metered.ca:80`],
+					username: 'openrelayproject',
+					credential: 'openrelayproject',
 					credentialType: 'password'
 				}
 			]
@@ -202,9 +199,10 @@
 		const audElem = document.querySelector('#audioElem > audio') as HTMLAudioElement;
 		audElem.srcObject = MS;
 		let wsd = 'ws://localhost:29874/ws';
-		if (!dev) {
-			wsd = 'wss://msh22.abhisheksarkar.me:29874/ws';
-		}
+		// REWRITE THIS FOR YOUR HOST
+		// if (!dev) {
+		// 	wsd = 'wss://prod.host/ws';
+		// }
 		const ws = new WebSocket(wsd);
 		ws.onclose = () => {
 			console.log('Signalling server closed');

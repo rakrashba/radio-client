@@ -182,13 +182,6 @@
 			]
 		});
 		PEER_CONN = pc;
-		pc.onnegotiationneeded = handleNegotiationNeededEvent;
-		pc.onicecandidate = handleOnIceCandidate;
-		pc.ontrack = handleTrackEvent;
-		pc.oniceconnectionstatechange = handleICEConnectionStateChangeEvent;
-		pc.onicegatheringstatechange = handleICEGatheringStateChangeEvent;
-		pc.onsignalingstatechange = handleSignalingStateChangeEvent;
-
 		if (IS_SPEAKER) {
 			let stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 			stream.getTracks().forEach((track) => {
@@ -198,6 +191,12 @@
 		} else {
 			pc.addTransceiver('audio', { direction: 'recvonly' });
 		}
+		pc.onnegotiationneeded = handleNegotiationNeededEvent;
+		pc.onicecandidate = handleOnIceCandidate;
+		pc.ontrack = handleTrackEvent;
+		pc.oniceconnectionstatechange = handleICEConnectionStateChangeEvent;
+		pc.onicegatheringstatechange = handleICEGatheringStateChangeEvent;
+		pc.onsignalingstatechange = handleSignalingStateChangeEvent;
 	};
 
 	onMount(async () => {

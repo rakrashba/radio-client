@@ -62,52 +62,43 @@
 		return true;
 	}
 
-	async function handleICECandidateEvent(this: RTCPeerConnection, ev: RTCPeerConnectionIceEvent) {
-		if (ev.candidate) {
-			sendToServer({
-				ev: 'new-ice-candidate',
-				id: ID,
-				data: JSON.stringify(ev.candidate.toJSON())
-			});
-		}
-	}
-
-	async function handleTrackEvent(this: RTCPeerConnection, ev: RTCTrackEvent) {
+	async function handleTrackEvent(ev: RTCTrackEvent) {
+		console.log('New Track received from peer');
 		MS?.addTrack(ev.track);
 	}
 
-	async function handleICEConnectionStateChangeEvent(this: RTCPeerConnection, ev: Event) {
-		console.log('iceConnectionState: ', this.iceConnectionState);
-		switch (this.iceConnectionState) {
+	async function handleICEConnectionStateChangeEvent(ev: Event) {
+		console.log('iceConnectionState: ', PEER_CONN?.iceConnectionState);
+		switch (PEER_CONN?.iceConnectionState) {
 			case 'closed':
 			case 'failed':
-				closeConn(this);
+				closeConn(PEER_CONN);
 				break;
 		}
 	}
 
-	async function handleICEGatheringStateChangeEvent(this: RTCPeerConnection, ev: Event) {
-		console.log(`iceGatheringState: ${this.iceGatheringState}`);
+	async function handleICEGatheringStateChangeEvent(ev: Event) {
+		console.log(`iceGatheringState: ${PEER_CONN?.iceGatheringState}`);
 	}
 
-	async function handleSignalingStateChangeEvent(this: RTCPeerConnection, ev: Event) {
-		console.log('signallingState: ', this.signalingState);
-		switch (this.signalingState) {
+	async function handleSignalingStateChangeEvent(ev: Event) {
+		console.log('signallingState: ', PEER_CONN?.signalingState);
+		switch (PEER_CONN?.signalingState) {
 			case 'closed':
-				closeConn(this);
+				closeConn(PEER_CONN);
 				break;
 		}
 	}
 
-	async function handleNegotiationNeededEvent(this: RTCPeerConnection, ev: Event) {
+	async function handleNegotiationNeededEvent(ev: Event) {
 		try {
 			SETTING_OFFER = true;
 			let ev = IS_SPEAKER ? 'speaker-offer' : 'listener-offer';
-			await this.setLocalDescription();
+			await PEER_CONN?.setLocalDescription();
 			await sendToServer({
 				ev: ev,
 				id: ID,
-				data: JSON.stringify(this.localDescription?.toJSON())
+				data: JSON.stringify(PEER_CONN?.localDescription?.toJSON())
 			});
 		} catch (err) {
 			console.error(err);
@@ -116,7 +107,7 @@
 		}
 	}
 
-	async function handleOnIceCandidate(this: RTCPeerConnection, ev: RTCPeerConnectionIceEvent) {
+	async function handleOnIceCandidate(ev: RTCPeerConnectionIceEvent) {
 		const ice_candidate = ev.candidate?.toJSON();
 		await sendToServer({
 			ev: 'ice-candidate',
@@ -126,19 +117,24 @@
 	}
 
 	async function handleOffer(data: WSMsg) {
-		if (PEER_CONN?.signalingState != 'stable') {
+		while (PEER_CONN?.signalingState != 'stable') {
 			return;
 		}
 		const sdp = JSON.parse(data.data) as RTCSessionDescription;
 		await PEER_CONN?.setRemoteDescription(sdp); // SRD rolls back as needed
-		await PEER_CONN?.setLocalDescription(await PEER_CONN?.createAnswer());
-		// await PEER_CONN?.setLocalDescription();
-		let ev = IS_SPEAKER ? 'speaker-answer' : 'listener-answer';
-		await sendToServer({
-			ev: ev,
-			id: ID,
-			data: JSON.stringify(PEER_CONN?.localDescription?.toJSON())
-		});
+		let local_desc = (await PEER_CONN?.createAnswer()) as RTCSessionDescriptionInit;
+		try {
+			await PEER_CONN?.setLocalDescription(local_desc);
+			let ev = IS_SPEAKER ? 'speaker-answer' : 'listener-answer';
+			await sendToServer({
+				ev: ev,
+				id: ID,
+				data: JSON.stringify(local_desc)
+			});
+		} catch (e) {
+			console.error(e);
+			PEER_CONN?.restartIce();
+		}
 	}
 
 	async function handleAnswer(data: WSMsg) {

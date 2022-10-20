@@ -163,18 +163,16 @@
 			console.error('A connection already exists');
 			return;
 		}
+		const port = location.protocol.indexOf('https') ? '5349' : '3478';
 		let pc = new RTCPeerConnection({
 			iceServers: [
 				{
-					urls: ['stun:stun.1.google.com:19302']
+					urls: [`stun:stun.talkcrap.xyz:${port}`]
 				},
 				{
-					urls: ['stun:turn.abhisheksarkar.me:3478']
-				},
-				{
-					urls: [`turn:turn.abhisheksarkar.me:3478`],
-					username: 'azureturn',
-					credential: 'azureturn',
+					urls: [`turn:turn.talkcrap.xyz:${port}`],
+					username: 'default',
+					credential: 'defaultpwd',
 					credentialType: 'password'
 				}
 			]
@@ -203,7 +201,7 @@
 		audElem.srcObject = MS;
 		let wsd = 'ws://localhost:29874/ws';
 		if (!dev) {
-			wsd = 'wss://msh22.abhisheksarkar.me:29874/ws';
+			wsd = 'wss://radio.talkcrap.xyz:29874/ws';
 		}
 		const ws = new WebSocket(wsd);
 		ws.onclose = () => {
